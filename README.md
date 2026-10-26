@@ -41,25 +41,41 @@ El objetivo del laboratorio es realizar un proceso completo de pentesting sobre 
 
 **Paso 1 — Verificación de conectividad.** Se confirmó mediante `ping` que existía conexión estable entre la máquina atacante y el objetivo (0% de pérdida de paquetes).
 
+![Prueba de conectividad con ping](evidencias/01-ping.png)
+
 **Paso 2 — Escaneo de puertos.** Con `nmap -sV -sC` se identificaron dos puertos abiertos:
 - `22/tcp` — SSH (OpenSSH 8.2p1 Ubuntu 4ubuntu0.13)
 - `80/tcp` — HTTP (Apache httpd 2.4.41 Ubuntu)
 
+![Escaneo de puertos con nmap](evidencias/02-nmap.png)
+
 **Paso 3 — Enumeración de directorios.** Con `gobuster dir` sobre el sitio web se descubrieron las rutas `/panel/` (formulario de carga de archivos), `/uploads/` (almacenamiento de archivos subidos), además de rutas protegidas (`.htaccess`, `server-status`) devolviendo 403.
+
+![Enumeración de directorios con gobuster](evidencias/03-gobuster.png)
 
 ### 3.2 Explotación
 
 **Paso 4 — Enumeración del formulario de carga.** Se probaron distintas extensiones de archivo en `/panel/`. El servidor bloqueaba `.php`, `.php.txt` y `.php3`, pero aceptaba y ejecutaba archivos con extensión `.php5`, evidenciando una validación de extensiones incompleta (lista negra, no lista blanca).
 
+![Pruebas de carga de archivos en el formulario](evidencias/04-formulario-subida.png)
+
 **Paso 5 — Obtención de reverse shell.** Se subió una variante del *PHP Reverse Shell* de Pentestmonkey con extensión `.php5`, configurada con la IP y puerto del listener (`nc -lvnp 4444`). Al acceder al archivo desde `/uploads/`, el servidor estableció conexión con la máquina atacante, obteniendo una shell como el usuario `www-data`.
 
+![Conexión de reverse shell recibida](evidencias/05-reverse-shell.png)
+
 **Paso 6 — Localización y lectura de `user.txt`.** Desde la shell remota, `find / -name user.txt 2>/dev/null` localizó el archivo en `/var/www/user.txt`, confirmando la primera flag del laboratorio.
+
+![Localización de user.txt](evidencias/06-user-flag.png)
 
 ### 3.3 Escalada de privilegios
 
 **Paso 7 — Enumeración de binarios SUID.** `find / -perm -u=s -type f 2>/dev/null` reveló que el intérprete de Python tenía el bit SUID activado y pertenecía a `root`, un vector claro de escalada.
 
+![Listado de binarios SUID](evidencias/07-suid-python.png)
+
 **Paso 8 — Escalada a root.** Consultando GTFOBins, se ejecutó `python -c 'import os; os.execl("/bin/sh", "sh", "-p")'`, obteniendo una shell con privilegios efectivos de `root` (confirmado con `whoami`). Desde ahí se localizó y leyó `/root/root.txt`, completando el laboratorio.
+
+![Escalada a root y acceso a /root](evidencias/08-root-shell.png)
 
 ---
 
@@ -145,17 +161,18 @@ Estos hallazgos corresponden a CVE públicos vigentes para las versiones de soft
 
 ## 6. Evidencias
 
-Las evidencias (capturas de pantalla) correspondientes a cada paso se encuentran en la carpeta [`/evidencias`](./evidencias):
+Las evidencias (capturas de pantalla) correspondientes a cada paso se encuentran en la carpeta [`/evidencias`](./evidencias) y ya están incluidas en línea junto a cada paso de la sección 3:
 
-- `01-ping.png` — Prueba de conectividad
-- `02-nmap.png` — Escaneo de puertos y servicios
-- `03-gobuster.png` — Enumeración de directorios
-- `04-formulario-subida.png` — Pruebas de carga de archivos (extensiones permitidas/bloqueadas)
-- `05-reverse-shell.png` — Conexión de reverse shell recibida con `nc`
-- `06-user-flag.png` — Localización de `user.txt` (comando ejecutado, sin exponer el valor de la flag)
-- `07-suid-python.png` — Listado de binarios SUID
-- `08-root-shell.png` — Escalada a `root` (`whoami`) y acceso a `/root/`
-
+| Archivo | Paso | Descripción |
+|---|---|---|
+| `01-ping.png` | Paso 1 | Prueba de conectividad |
+| `02-nmap.png` | Paso 2 | Escaneo de puertos y servicios |
+| `03-gobuster.png` | Paso 3 | Enumeración de directorios |
+| `04-formulario-subida.png` | Paso 4 | Pruebas de carga de archivos (extensiones permitidas/bloqueadas) |
+| `05-reverse-shell.png` | Paso 5 | Conexión de reverse shell recibida con `nc` |
+| `06-user-flag.png` | Paso 6 | Localización de `user.txt` (comando ejecutado, sin exponer el valor de la flag) |
+| `07-suid-python.png` | Paso 7 | Listado de binarios SUID |
+| `08-root-shell.png` | Paso 8 | Escalada a `root` (`whoami`) y acceso a `/root/` |
 
 ---
 
