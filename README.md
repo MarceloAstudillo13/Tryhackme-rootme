@@ -55,7 +55,7 @@ El objetivo del laboratorio es realizar un proceso completo de pentesting sobre 
 
 ### 3.2 Explotación
 
-**Paso 4 — Enumeración del formulario de carga.** Tras identificar las rutas /uploads/ y /panel/ mediante Gobuster, se examinó el formulario de carga de archivos disponible en /panel/. Inicialmente, se comprobó que los archivos .txt y .png eran aceptados y quedaban accesibles desde /uploads/. Posteriormente, se realizaron pruebas con distintas extensiones: .php fue rechazada, mientras que .php.txt y .php3 no dieron el resultado esperado. Finalmente, se comprobó que un archivo con extensión .php5 podía cargarse correctamente. Este comportamiento evidenció diferencias en la validación de extensiones y justificó continuar investigando cómo el servidor gestionaba los archivos cargados. En el paso siguiente se documenta la prueba que permitió obtener una reverse shell.
+**Paso 4 — Enumeración del formulario de carga.** Tras identificar las rutas /uploads/ y /panel/ mediante Gobuster, se examinó el formulario de carga de archivos disponible en /panel/. Inicialmente, se comprobó que los archivos .txt y .jpeg eran aceptados y quedaban accesibles desde /uploads/. Posteriormente, se realizaron pruebas con distintas extensiones: .php fue rechazada, mientras que .php.txt y .php3 no dieron el resultado esperado. Finalmente, se comprobó que un archivo con extensión .php5 podía cargarse correctamente. Este comportamiento evidenció diferencias en la validación de extensiones y justificó continuar investigando cómo el servidor gestionaba los archivos cargados. En el paso siguiente se documenta la prueba que permitió obtener una reverse shell.
 
 ![Pruebas de carga de archivos en el formulario](evidencias/04-formulario-subida.png)
 
