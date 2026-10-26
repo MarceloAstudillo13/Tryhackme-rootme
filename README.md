@@ -98,7 +98,7 @@ Las dos vulnerabilidades realmente explotadas corresponden a fallas de configura
 
 #### 4.1.1 Detalle — Vulnerabilidad #1: Subida de archivos sin restricción (RCE)
 
-- **Descripción:** el formulario de `/panel/` valida las extensiones permitidas mediante una lista negra (bloquea `.php`, `.php.txt`, `.php3`), pero no contempla variantes como `.php5`, que Apache sigue interpretando como PHP ejecutable por configuración de `AddHandler`/`AddType`.
+- **Descripción:** el formulario de `/panel/` valida las extensiones permitidas mediante una lista negra bloquea `.php`, pero no contempla variantes como `.php5`, que Apache sigue interpretando como PHP ejecutable por configuración de `AddHandler`/`AddType`.
 - **Método de detección:** pruebas manuales de carga con distintas extensiones tras identificar el formulario con `gobuster`.
 - **Condiciones de explotación:** acceso no autenticado al formulario de `/panel/`; servidor configurado para ejecutar múltiples extensiones asociadas a PHP; carpeta `/uploads/` con permisos de ejecución de scripts.
 - **Impacto potencial:** ejecución remota de código en el contexto del servicio web (`www-data`), compromiso total de la confidencialidad e integridad de la aplicación, y punto de pivote hacia el sistema operativo subyacente.
